@@ -1,0 +1,22 @@
+[Unit]
+Description=alertmanager
+Requires=basic.target network.target
+After=basic.target network.target
+Documentation=XX
+
+User=nobody
+Group=nobody
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=read-only
+NoNewPrivileges=yes
+EnvironmentFile=/etc/default/alertmanager
+ExecStart=/usr/bin/alertmanager $OPTS
+# Runs in FG-mode and needs SIGINT to stop gracefully
+KillSignal=SIGINT
+TimeoutStopSec=30s
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=default.target

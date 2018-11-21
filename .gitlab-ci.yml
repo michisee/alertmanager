@@ -1,0 +1,20 @@
+image: docker.mamdev.server.lan/internal/mamido/ci-runner:latest
+
+variables:
+  DISTRIBUTIONS: "wheezy,ui70-portal,jessie,ui80-portal,stretch,ui90-portal"
+
+build:
+  variables:
+    PACKAGE: alertmanager
+
+  stage: test
+  script:
+    - "VERSION=${CI_BUILD_TAG%-*}"
+    - "ITERATION=${CI_BUILD_TAG##*-}"
+    - wget https://github.com/prometheus/alertmanager/releases/download/v0.15.3/alertmanager-0.15.3.linux-amd64.tar.gz
+    - tar xvzf alertmanger-0.15.3.linux-amd64.tar.gz
+    - fpm -t deb -n alertmanager -s dir -v 0.15.3 -C /home/mseeber/alertmanager/alertmanager
+    --deb-systemd /home/mseeber/alertmanager/alertmanager.service
+    --deb systemd-restart-after-upgrade
+    --deb-user nobody
+    --deb-group nogroup
