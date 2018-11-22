@@ -11,4 +11,8 @@ build:
   script:
     - wget https://github.com/prometheus/alertmanager/releases/download/v0.15.3/alertmanager-0.15.3.linux-amd64.tar.gz
     - tar xzvf alertmanager-0.15.3.linux-amd64.tar.gz
-    - fpm -t deb -n alertmanager -s dir -v 0.15.3 -C /home/mseeber/alertmanager/alertmanager --deb-systemd /home/mseeber/alertmanager/alertmanager.service --deb systemd-restart-after-upgrade --deb-user nobody --deb-group nogroup
+    - fpm -t deb -n alertmanager -s dir -v 0.15.3 -C /home/mseeber/alertmanager/alertmanager
+    --deb-systemd ${CI_PROJECT_DIR}/alertmanager.service
+    --deb systemd-restart-after-upgrade
+    --deb-user nobody
+    --deb-group nogroup
