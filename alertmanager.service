@@ -2,8 +2,8 @@
 Description=alertmanager
 Requires=basic.target network.target
 After=basic.target network.target
-Documentation=XX
 
+[Service]
 User=nobody
 Group=nobody
 PrivateDevices=yes
@@ -11,7 +11,7 @@ PrivateTmp=yes
 ProtectSystem=full
 ProtectHome=read-only
 NoNewPrivileges=yes
-EnvironmentFile=/etc/default/alertmanager
+EnvironmentFile=/etc/default/prometheus-alertmanager
 ExecStart=/usr/bin/alertmanager $OPTS
 # Runs in FG-mode and needs SIGINT to stop gracefully
 KillSignal=SIGINT
