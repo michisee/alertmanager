@@ -1,0 +1,84 @@
+#!/bin/sh
+# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
+if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
+    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
+fi
+### BEGIN INIT INFO
+# Provides:          prometheus-alertmanager
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Alertmanager for Prometheus
+# Description:       The Alertmanager handles alerts sent by client
+#                    applications such as the Prometheus server. It takes care
+#                    of deduplicating, grouping, and routing them to the
+#                    correct receiver integration such as email, PagerDuty, or
+#                    OpsGenie. It also takes care of silencing and inhibition
+#                    of alerts.
+### END INIT INFO
+
+# Author: Martín Ferrari <tincho@debian.org>
+
+DESC="Alertmanager for Prometheus"
+DAEMON=/usr/bin/prometheus-alertmanager
+NAME=prometheus
+USER=prometheus
+PIDFILE=/var/run/prometheus/prometheus-alertmanager.pid
+LOGFILE=/var/log/prometheus/prometheus-alertmanager.log
+
+HELPER=/usr/bin/daemon
+HELPER_ARGS="--name=$NAME --output=$LOGFILE --pidfile=$PIDFILE --user=$USER"
+
+ARGS=""
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+do_start_prepare()
+{
+    mkdir -p `dirname $PIDFILE` || true
+    chown $USER: `dirname $LOGFILE`
+    chown $USER: `dirname $PIDFILE`
+}
+
+do_start_cmd()
+{
+    # Return
+    #   0 if daemon has been started
+    #   1 if daemon was already running
+    #   2 if daemon could not be started
+    $HELPER $HELPER_ARGS --running && return 1
+    $HELPER $HELPER_ARGS -- $DAEMON $ARGS || return 2
+    return 0
+}
+
+do_stop_cmd()
+{
+    # Return
+    #   0 if daemon has been stopped
+    #   1 if daemon was already stopped
+    #   2 if daemon could not be stopped
+    #   other if a failure occurred
+    $HELPER $HELPER_ARGS --running || return 1
+    $HELPER $HELPER_ARGS --stop || return 2
+    # wait for the process to really terminate
+    for n in 1 2 3 4 5; do
+        sleep $n
+        $HELPER $HELPER_ARGS --running || break
+    done
+    $HELPER $HELPER_ARGS --running || return 0
+    return 2
+}
+
+do_reload()
+{
+    log_daemon_msg "Reloading $DESC configuration files" "$NAME"
+    $HELPER $HELPER_ARGS --running || return 1
+    helper_pid=$(cat $PIDFILE)
+    if [ -z "$helper_pid" ]; then
+        log_failure_msg "Unable to find PID"
+        return 1
+    fi
+    start-stop-daemon --stop --signal 1 --quiet \
+        --ppid "$helper_pid" --exec "$DAEMON"
+    log_end_msg $?
+}
