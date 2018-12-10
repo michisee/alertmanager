@@ -15,8 +15,8 @@ build:
     - gem install --no-ri --no-rdoc fpm
     - apt-get install wget -y 
     - wget ftp.de.debian.org/debian/pool/main/p/prometheus-alertmanager/prometheus-alertmanager_0.15.1+ds-1_amd64.deb
-    - ar -x prometheus-alertmanager_0.15.1+ds-1_amd64.deb data.tar.gz
-    - rm $PWD/data/*
+    - ar -x prometheus-alertmanager_0.15.1+ds-1_amd64.deb
+    - rm -r $PWD/data/*
     - tar -xf data.tar.xz -C $PWD/data
     - rm $PWD/data/lib/systemd/system/prometheus-alertmanager.service
     - cp $PWD/prometheus-alertmanager.service $PWD/data/lib/systemd/system/
