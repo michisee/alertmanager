@@ -19,7 +19,7 @@ build:
     - tar -xf data.tar.xz -C $PWD/data
     - rm $PWD/data/lib/systemd/system/prometheus-alertmanager.service
     - cp $PWD/prometheus-alertmanager.service $PWD/data/lib/systemd/system/
-    - fpm -t deb -n alertmanager -s dir -C $PWD/data -v 0.15.3  
+    - fpm -t deb -n alertmanager -s dir -C $PWD/data -v 0.15.1
       -m "\"${GITLAB_USER_NAME}\" <${GITLB_USER_EMAIL}>"
       --deb-systemd-restart-after-upgrade
       --deb-user nobody
