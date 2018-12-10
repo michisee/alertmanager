@@ -13,6 +13,12 @@ build:
     - apt-get install ruby ruby-dev rubygems build-essential -y
     - apt-get update -y 
     - gem install --no-ri --no-rdoc fpm
+    - wget ftp.de.debian.org/debian/pool/main/p/prometheus-alertmanager/prometheus-alertmanager_0.15.1+ds-1_amd64.deb
+    - ar -x prometheus-alertmanager_0.15.1+ds-1_amd64.deb data.tar.gz
+    - rm $PWD/data/*
+    - tar -xf data.tar.xz -C $PWD/data
+    - rm $PWD/data/lib/systemd/system/prometheus-alertmanager.service
+    - cp $PWD/prometheus-alertmanager.service $PWD/data/lib/systemd/system/
     - fpm -t deb -n alertmanager -s dir -C $PWD/data -v 0.15.3  
       -m "\"${GITLAB_USER_NAME}\" <${GITLB_USER_EMAIL}>"
       --deb-systemd-restart-after-upgrade
