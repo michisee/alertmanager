@@ -1,4 +1,4 @@
-image: debian
+image: docker.mamdev.server.lan/internal/mamido/ci-runner:latest
 
 variables:
   DISTRIBUTIONS: "wheezy,ui70-portal,jessie,ui80-portal,stretch,ui90-portal"
@@ -9,18 +9,23 @@ build:
 
   stage: test
   script:
-    - apt-get update 
-    - apt-get install ruby ruby-dev rubygems build-essential -y
-    - apt-get update
-    - gem install --no-ri --no-rdoc fpm
-    - apt-get install wget -y 
-    - wget ftp.de.debian.org/debian/pool/main/p/prometheus-alertmanager/prometheus-alertmanager_0.15.1+ds-1_amd64.deb
-    - ar -x prometheus-alertmanager_0.15.1+ds-1_amd64.deb
-    - rm -r $PWD/data/*
-    - tar -xf data.tar.xz -C $PWD/data
-    - rm $PWD/data/lib/systemd/system/prometheus-alertmanager.service
-    - cp $PWD/prometheus-alertmanager.service $PWD/data/lib/systemd/system/
-    - fpm -t deb -n alertmanager -s dir -C $PWD/data -v 0.15.1
+    - wget https://github.com/prometheus/alertmanager/releases/download/v0.15.3/alertmanager-0.15.3.linux-amd64.tar.gz
+    - tar xzvf alertmanager-0.15.3.linux-amd64.tar.gz
+    - mkdir -p data/etc/sv/alertmanager/log/run
+    - mkdir -p data/etc/default
+    - mkdir -p data/etc/systemd/system/alertmanager.service.d/ 
+    - mkdir -p data/usr/share/doc
+    - mkdir data/usr/share/alertmanager
+    - mkdir data/usr/share/doc/alertmanager
+    - mkdir -p data/usr/bin
+    - mkdir -p data/lib/systemd/system/
+    - cp $PWD/alertmanager.service $PWD/data/lib/systemd/system/
+    - cp $PWD/alertmanager-0.15.3.linux-amd64/alertmanager $PWD/data/usr/bin
+    - cp $PWD/alertmanager-0.15.3.linux-amd64/amtool $PWD/data/usr/bin
+    - cp $PWD/alertmanager-0.15.3.linux-amd64/alertmanager.yml data/etc/
+    - touch data/etc/default/alertmanager
+    - echo "ARGS="--config.file=/etc/prometheus/alertmanager.yml"" >> data/etc/default/alertmanager
+    - fpm -t deb -n alertmanager -C $PWD/data -s dir -v 0.15.3 
       -m "\"${GITLAB_USER_NAME}\" <${GITLB_USER_EMAIL}>"
       --deb-systemd-restart-after-upgrade
       --deb-user nobody
