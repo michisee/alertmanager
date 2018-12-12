@@ -1,4 +1,4 @@
-image: docker.mamdev.server.lan/internal/mamido/ci-runner:latest
+image: debian
 
 variables:
   DISTRIBUTIONS: "wheezy,ui70-portal,jessie,ui80-portal,stretch,ui90-portal"
