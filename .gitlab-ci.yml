@@ -24,7 +24,7 @@ build:
     - cp $PWD/alertmanager-0.15.3.linux-amd64/amtool $PWD/data/usr/bin
     - cp $PWD/alertmanager-0.15.3.linux-amd64/alertmanager.yml data/etc/
     - touch data/etc/default/alertmanager
-    - echo "ARGS="--config.file=/etc/prometheus/alertmanager.yml"" >> data/etc/default/alertmanager
+    - echo "ARGS="--config.file=/etc/alertmanager.yml"" >> data/etc/default/alertmanager
     - fpm -t deb -n alertmanager -C $PWD/data -s dir -v 0.15.3 
       -m "\"${GITLAB_USER_NAME}\" <${GITLB_USER_EMAIL}>"
       --deb-systemd-restart-after-upgrade
