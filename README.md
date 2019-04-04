@@ -171,12 +171,13 @@ To remove a key from a hash, set the value to `---`. For example, to remove the
 spec/default_facts.yml:
   ipaddress: '---'
 ```
+
 ## Beaker system tests
 
 To enable the ability to run Beaker system test on your module, add  the
 following entry to your `.sync.yml`and run `pdk update`.
 
-If image Files are existing:
+If image Files are existing in `spec/acceptance/nodesets/docker/`:
 
 ```yaml
 ---
@@ -186,7 +187,7 @@ If image Files are existing:
     - 'docker/debian8-64'
 ```
 
-If image Files are not existing:
+If image Files are not existing in `spec/acceptance/nodesets/docker/`:
 
 ```yaml
 ---
