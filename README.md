@@ -171,13 +171,17 @@ To remove a key from a hash, set the value to `---`. For example, to remove the
 spec/default_facts.yml:
   ipaddress: '---'
 ```
-
 ## Beaker system tests
 
-To enable the ability to run Beaker system test on your module, add  the
-following entry to your `.sync.yml`and run `pdk update`.
+To enable the ability to run Beaker system test on your module, you have to create a
+nodesest directory like [here](https://github.com/puppetlabs/beaker-rspec#create-node-files). 
+If you have done this, you can either create node files by yourself or you can also have
+them created by the [beaker-hostgenerator](https://github.com/puppetlabs/beaker-hostgenerator#usage).
+These files indicate the nodes (or hosts) that the tests will be run on.
 
-If a host config file is existing in `spec/acceptance/nodesets/docker`:
+Add one of the following entry to your `.sync.yml`and run `pdk update`.
+
+If a node file was created by yourself in `spec/acceptance/nodesets/docker`:
 
 ```yaml
 ---
@@ -187,7 +191,7 @@ If a host config file is existing in `spec/acceptance/nodesets/docker`:
     - 'docker/debian8-64'
 ```
 
-If a host config file is not existing in `spec/acceptance/nodesets/docker`:
+If you don't create a node file in `spec/acceptance/nodesets/docker` and you want to use the [beaker-hostgenerator](https://github.com/puppetlabs/beaker-hostgenerator#usage) to create one:
 
 ```yaml
 ---
